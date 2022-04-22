@@ -214,6 +214,16 @@ code_name_to_value_lookup = {
 	'KEY_F23':(193, 'kb_key'),
 	'KEY_F24':(194, 'kb_key'),
 	# --------------------
+	'BTN_TRIGGER':(0x120, 'usb_gp_btn'),
+	'BTN_THUMB':(0x121, 'usb_gp_btn'),
+	'BTN_THUMB2':(0x122, 'usb_gp_btn'),
+	'BTN_TOP':(0x123, 'usb_gp_btn'),
+	'BTN_TOP2':(0x124, 'usb_gp_btn'),
+	'BTN_PINKIE':(0x125, 'usb_gp_btn'),
+	'BTN_BASE':(0x126, 'usb_gp_btn'),
+	'BTN_BASE2':(0x127, 'usb_gp_btn'),
+	'BTN_BASE3':(0x128, 'usb_gp_btn'),
+	'BTN_BASE4':(0x129, 'usb_gp_btn'),
 	'BTN_GAMEPAD':(0x130, 'usb_gp_btn'),
 	'BTN_SOUTH':(0x130, 'usb_gp_btn'),
 	'BTN_A':(0x130, 'usb_gp_btn'),
@@ -297,6 +307,16 @@ code_name_to_value_lookup = {
 }
 
 code_value_to_name_lookup = {
+	0x120:{'BTN_TRIGGER'},
+	0x121:{'BTN_THUMB'},
+	0x122:{'BTN_THUMB2'},
+	0x123:{'BTN_TOP'},
+	0x124:{'BTN_TOP2'},
+	0x125:{'BTN_PINKIE'},
+	0x126:{'BTN_BASE'},
+	0x127:{'BTN_BASE2'},
+	0x128:{'BTN_BASE3'},
+	0x129:{'BTN_BASE4'},
 	0x130:{'BTN_SOUTH', 'BTN_A'},
 	0x131:{'BTN_EAST', 'BTN_B'},
 	0x132:{'BTN_C'},

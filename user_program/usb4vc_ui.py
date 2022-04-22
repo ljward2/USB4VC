@@ -120,6 +120,11 @@ IBM_GENERIC_USB_GAMEPAD_TO_15PIN_GAMEPORT_GAMEPAD_DEAULT_MAPPING = {
     'BTN_EAST': {'code':'IBM_GGP_BTN_3'},
     'BTN_WEST': {'code':'IBM_GGP_BTN_4'},
     
+    'BTN_THUMB2': {'code':'IBM_GGP_BTN_1'},
+    'BTN_TRIGGER': {'code':'IBM_GGP_BTN_2'},
+    'BTN_THUMB': {'code':'IBM_GGP_BTN_3'},
+    'BTN_TOP': {'code':'IBM_GGP_BTN_4'},
+    
     'BTN_TL': {'code':'IBM_GGP_BTN_1'},
     'BTN_TR': {'code':'IBM_GGP_BTN_2'},
     'BTN_Z': {'code':'IBM_GGP_BTN_3'},

@@ -81,6 +81,7 @@ SPI_MISO_MSG_TYPE_KB_LED_REQUEST = 129
 SPI_MOSI_MAGIC = 0xde
 SPI_MISO_MAGIC = 0xcd
 
+BTN_TRIGGER = 0x120
 BTN_SOUTH = 0x130
 BTN_TR = 0x137
 BTN_TL2 = 0x138
@@ -202,18 +203,24 @@ def find_keycode_in_mapping(source_code, mapping_dict, usb_gamepad_type):
         map_dict_copy = usb4vc_gamepads.PS4_DEFAULT_MAPPING
     elif 'Xbox' in usb_gamepad_type and map_dict_copy.get("MAPPING_TYPE") == "DEFAULT_15PIN":
         map_dict_copy = usb4vc_gamepads.XBOX_DEFAULT_MAPPING
+    elif 'Snes' in usb_gamepad_type and map_dict_copy.get("MAPPING_TYPE") == "DEFAULT_15PIN":
+        map_dict_copy = usb4vc_gamepads.SNES_DEFAULT_MAPPING
     elif 'DualSense' in usb_gamepad_type and map_dict_copy.get("MAPPING_TYPE") == "DEFAULT_MOUSE_KB":
         map_dict_copy = usb4vc_gamepads.PS5_DEFAULT_KB_MOUSE_MAPPING
     elif 'DualShock 4' in usb_gamepad_type and map_dict_copy.get("MAPPING_TYPE") == "DEFAULT_MOUSE_KB":
         map_dict_copy = usb4vc_gamepads.PS4_DEFAULT_KB_MOUSE_MAPPING
     elif 'Xbox' in usb_gamepad_type and map_dict_copy.get("MAPPING_TYPE") == "DEFAULT_MOUSE_KB":
         map_dict_copy = usb4vc_gamepads.XBOX_DEFAULT_KB_MOUSE_MAPPING
+    elif 'Snes' in usb_gamepad_type and map_dict_copy.get("MAPPING_TYPE") == "DEFAULT_MOUSE_KB":
+        map_dict_copy = usb4vc_gamepads.SNES_DEFAULT_KB_MOUSE_MAPPING
 
     source_name = usb4vc_shared.code_value_to_name_lookup.get(source_code)
     if source_name is None:
         return None, None
     if 'Xbox' in usb_gamepad_type:
         map_dict_copy = translate_dict(map_dict_copy, usb4vc_gamepads.xbox_one_to_linux_ev_code_dict)
+    elif 'Snes' in usb_gamepad_type:
+        map_dict_copy = translate_dict(map_dict_copy, usb4vc_gamepads.snes_to_linux_ev_code_dict)
     elif 'DualSense' in usb_gamepad_type:
         map_dict_copy = translate_dict(map_dict_copy, usb4vc_gamepads.ps5_to_linux_ev_code_dict)
     elif 'DualShock 4' in usb_gamepad_type:
@@ -232,7 +239,7 @@ def find_keycode_in_mapping(source_code, mapping_dict, usb_gamepad_type):
     source_type = None
     if ABS_X <= source_code <= ABS_HAT3Y:
         source_type = 'usb_abs_axis'
-    elif BTN_SOUTH <= source_code <= BTN_THUMBR or source_code in gamepad_buttons_as_kb_codes:
+    elif BTN_TRIGGER <= source_code <= BTN_THUMBR or source_code in gamepad_buttons_as_kb_codes:
         source_type = 'usb_gp_btn'
     if source_type is None:
         return None, None
@@ -457,8 +464,8 @@ def make_unknown_raw_gamepad_spi_packet(gp_status_dict, this_device_info):
     this_msg[6:8] = this_device_info['product_id'].to_bytes(2, byteorder='little')
 
     for event_code in gp_status_dict[gp_id]:
-        if BTN_SOUTH <= event_code <= BTN_TR:
-            this_msg[8] |= (gp_status_dict[gp_id][event_code] << (event_code - BTN_SOUTH))
+        if BTN_TRIGGER <= event_code <= BTN_TR:
+            this_msg[8] |= (gp_status_dict[gp_id][event_code] << (event_code - BTN_TRIGGER))
         elif BTN_TL2 <= event_code <= BTN_THUMBR:
             this_msg[9] |= (gp_status_dict[gp_id][event_code] << (event_code - BTN_TL2))
         elif ABS_X <= event_code <= ABS_HAT3Y:
@@ -564,7 +571,7 @@ def make_supported_raw_gamepad_spi_packet(gp_status_dict, this_device_info):
         "DPAD_X":127,
         "DPAD_Y":127,
     }
-    if this_device_info['gamepad_type'] == 'Xbox':
+    if this_device_info['gamepad_type'] == 'Xbox' or this_device_info['gamepad_type'] == 'Snes':
         for item in this_gp_status:
             generic_name = xbox_to_generic_dict.get(item)
             if generic_name is not None:
@@ -756,7 +763,7 @@ def raw_input_event_worker():
                         last_mouse_button_msg = make_mouse_spi_packet(mouse_status_dict, this_id)
                         pcard_spi.xfer(list(last_mouse_button_msg))
                 # Gamepad buttons
-                elif BTN_SOUTH <= event_code <= BTN_THUMBR or event_code in gamepad_buttons_as_kb_codes:
+                elif BTN_TRIGGER <= event_code <= BTN_THUMBR or event_code in gamepad_buttons_as_kb_codes:
                     this_btn_status = data[4]
                     if this_btn_status != 0:
                         this_btn_status = 1
@@ -852,7 +859,7 @@ def get_input_devices():
             dev_dict['is_kb'] = True
         if 'KEY_MODE' in cap_str:
             dev_dict['is_gp'] = True
-        if 'EV_ABS' in cap_str and "BTN_SOUTH" in cap_str:
+        if 'EV_ABS' in cap_str and "BTN_THUMB" in cap_str:
             dev_dict['is_gp'] = True
             try:
                 for item in this_device.capabilities()[EV_ABS]:

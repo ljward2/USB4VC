@@ -1,3 +1,4 @@
+GAMEPAD_TYPE_SNES = 'Snes'
 GAMEPAD_TYPE_XBOX = 'Xbox'
 GAMEPAD_TYPE_PS4_GEN1 = "DualShock 4 [CUH-ZCT1x]"
 GAMEPAD_TYPE_PS4_GEN2 = "DualShock 4 [CUH-ZCT2x]"
@@ -17,6 +18,8 @@ def gamepad_type_lookup(vendor_id, product_id):
         return GAMEPAD_TYPE_SWITCH_PRO
     if vendor_id == 0x045e:
         return GAMEPAD_TYPE_XBOX
+    if vendor_id == 0x79 and product_id == 0x11:
+        return GAMEPAD_TYPE_SNES
     return GAMEPAD_TYPE_UNKNOWN
 
 ABS_Z = 0x02
@@ -61,6 +64,19 @@ raw_usb_gamepad_abs_axes_to_spi_msg_index_lookup = {
     0x1a:None, #ABS_TILT_X
     0x1b:None, #ABS_TILT_Y
     0x1c:None, #ABS_TOOL_WIDTH
+}
+
+snes_to_linux_ev_code_dict = {
+    "XB_A":"BTN_THUMB2",
+    "XB_B":"BTN_THUMB",
+    "XB_X":"BTN_TRIGGER",
+    "XB_Y":"BTN_TOP",
+    "XB_LB":"BTN_TOP2",
+    "XB_RB":"BTN_PINKIE",
+    "XB_VIEW":"BTN_BASE3",
+    "XB_MENU":"BTN_BASE4",
+    "XB_LSX":"ABS_X",
+    "XB_LSY":"ABS_Y",
 }
 
 xbox_one_to_linux_ev_code_dict = {
@@ -152,6 +168,8 @@ XBOX_DEFAULT_KB_MOUSE_MAPPING = {
     'XB_VIEW': {'code': 'KEY_ESC'}
 }
 
+SNES_DEFAULT_KB_MOUSE_MAPPING = XBOX_DEFAULT_KB_MOUSE_MAPPING;
+
 PS5_DEFAULT_KB_MOUSE_MAPPING = {
     'PS_CROSS': {'code': 'BTN_LEFT'},
     'PS_SQUARE': {'code': 'BTN_LEFT'},
@@ -198,6 +216,23 @@ PS4_DEFAULT_KB_MOUSE_MAPPING = {
     'PS_OPTION': {'code': 'KEY_ESC'}
 }
 
+SNES_DEFAULT_MAPPING = {
+    # buttons to buttons
+    'BTN_THUMB2': {'code':'IBM_GGP_BTN_1'},
+    'BTN_TRIGGER': {'code':'IBM_GGP_BTN_2'},
+    'BTN_THUMB': {'code':'IBM_GGP_BTN_3'},
+    'BTN_TOP': {'code':'IBM_GGP_BTN_4'},
+    
+    'BTN_TOP2': {'code':'IBM_GGP_BTN_3'},
+    'BTN_PINKIE': {'code':'IBM_GGP_BTN_4'},
+    # buttons to keyboard keys
+    'BTN_BASE3': {'code':'KEY_ESC'},
+    'BTN_BASE4': {'code':'KEY_ENTER'},
+    # analog axes to analog axes
+    'ABS_X': {'code':'IBM_GGP_JS1_X'},
+    'ABS_Y': {'code':'IBM_GGP_JS1_Y'},
+}
+
 XBOX_DEFAULT_MAPPING = {
     # buttons to buttons
     'BTN_A': {'code':'IBM_GGP_BTN_1'},
@@ -220,6 +255,7 @@ XBOX_DEFAULT_MAPPING = {
     'ABS_Z':{'code':'IBM_GGP_JS2_YP'},
     'ABS_RZ':{'code':'IBM_GGP_JS2_YN'},
 }
+
 
 PS5_DEFAULT_MAPPING = {
     # buttons to buttons
